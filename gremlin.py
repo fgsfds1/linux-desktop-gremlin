@@ -160,16 +160,6 @@ class GremlinWindow(QWidget):
             case State.SLEEPING:
                 c.Sleep = 0
 
-    def on_walk_idle_finished(self):
-        """ Called by the walk_idle_timer after 2 seconds. """
-        # only transition if we are still in the WALK_IDLE state
-        if self.current_state == State.WALK_IDLE:
-            # transition to HOVER if mouse is over, otherwise IDLE
-            if self.underMouse():
-                self.set_state(State.HOVER)
-            else:
-                self.set_state(State.IDLE)
-
     # --- @! Animations ------------------------------------------------------------------
 
     def play_animation(self, sheet, current_frame, frame_count):
@@ -350,7 +340,7 @@ class GremlinWindow(QWidget):
             self.set_state(State.IDLE)
 
     def idle_timer_tick(self):
-        """ When timer fires, go to sleep. """
+        """ After being idle for a long enough time, go to sleep. """
         if self.current_state == State.IDLE:
             self.set_state(State.SLEEPING)
 
@@ -365,6 +355,16 @@ class GremlinWindow(QWidget):
         if s.CurrentFrames.Outro == 0:
             self.close_timer.stop()
             sys.exit(0)
+
+    def on_walk_idle_finished(self):
+        """ Called by the walk_idle_timer after 2 seconds. """
+        # only transition if we are still in the WALK_IDLE state
+        if self.current_state == State.WALK_IDLE:
+            # transition to HOVER if mouse is over, otherwise IDLE
+            if self.underMouse():
+                self.set_state(State.HOVER)
+            else:
+                self.set_state(State.IDLE)
 
     def reset_emote_timer(self):
         """
